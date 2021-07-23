@@ -50,8 +50,6 @@ def cgr_build(kmers):
 		max_x, max_y = windsize, windsize
 		pos_x, pos_y = 1, 1
 
-	
-	print(cgr_window)
 
 	return cgr_window
 
@@ -74,11 +72,18 @@ if __name__ == "__main__":
 
 
 
+
 	cgr_window = cgr_build(case_kspectra[0])
 
 	pylab.title("Chaos Game Representation for 0th Case")
 	pylab.imshow(cgr_window, interpolation='nearest', cmap=clt.gray_r)
 
 	pylab.show()
+
+	# now for all
+	case_cgr = list(map(cgr_build, case_kspectra))
+	control_kspectra = list(map(cgr_build, control_kspectra))
+
+	print(case_cgr[0])
 
 
