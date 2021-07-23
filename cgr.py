@@ -1,13 +1,16 @@
 import numpy as np
 import collections
-import math
+import matplotlib.cm as clt
+import pylab
 
 
 def load_sequences(filename, path="./"):
 	return np.load(path+filename)
 	
 
-def kmer_count(sequence, k=5):
+def kmer_count(sequence):
+	global k
+
 	k_spectra = collections.defaultdict(int)
 
 	for i in range(len(sequence) - k + 1):
@@ -16,13 +19,15 @@ def kmer_count(sequence, k=5):
 	return(k_spectra)
 
 
-def cgr_build(kmers, k=5):
+def cgr_build(kmers):
+	global k
+
 
 	# Positions in CGR window:#
-	#		A 		G 		  #
+	#		A 		C 		  #
 	#						  #
 	#						  #
-	#		C 		T 		  #
+	#		T 		G 		  #
 	###########################
 
 	windsize = 2 ** k
@@ -41,7 +46,7 @@ def cgr_build(kmers, k=5):
 			max_x /= 2
 			max_y /= 2
 
-		cgr_window[pos_x-1][pos_y-1] = val
+		cgr_window[int(pos_x-1)][int(pos_y-1)] = val
 		max_x, max_y = windsize, windsize
 		pos_x, pos_y = 1, 1
 
@@ -54,18 +59,26 @@ def cgr_build(kmers, k=5):
 if __name__ == "__main__":
 	case = load_sequences(filename="case.npy")
 	control = load_sequences(filename="control.npy")
-	k = 5
+	k = 3
 
-	print(case)
-	print(control)
+	# print(case)
+	# print(control)
 	
 
 	case_kspectra = list(map(kmer_count, case))
 	control_kspectra = list(map(kmer_count, control))
 
-	print(case_kspectra)
+	# print(case_kspectra)
 
-	cgr_build(3)
+	print(case_kspectra[0])
 
 
-	# NOW WE SHOULD GO FOR CGR
+
+	cgr_window = cgr_build(case_kspectra[0])
+
+	pylab.title("Chaos Game Representation for 0th Case")
+	pylab.imshow(cgr_window, interpolation='nearest', cmap=clt.gray_r)
+
+	pylab.show()
+
+
