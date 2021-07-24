@@ -85,11 +85,14 @@ if __name__ == "__main__":
 
 
 	if need_img:
+		# num_img = len(case_cgr)
+		num_img = 5
+
 		name = "case"
-		done = list(map(save_img, case_cgr[:20], range(len(case_cgr[:20]))))
+		done = list(map(save_img, case_cgr[:num_img], range(len(case_cgr[:num_img]))))
 
 		name = "control"
-		done = list(map(save_img, control_cgr[:20], range(len(control_cgr[:20]))))
+		done = list(map(save_img, control_cgr[:num_img], range(len(control_cgr[:num_img]))))
 
 
 		print(done)
