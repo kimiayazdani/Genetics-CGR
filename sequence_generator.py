@@ -4,7 +4,7 @@ def sequence_generator():
 	# a series of random sequences, half case half control. A number of case columns with probability of P to have A in control gp and C in case, o.w both A.
 
 	alphabet = ['A', 'C', 'G', 'T']
-	params = {'seq_num': 10, 'length': 1000, 'case_ok_cols': 60, 'prob_case': 1}
+	params = {'seq_num': 1000, 'length': 1000, 'case_ok_cols': 200, 'prob_case': 0.5}
 
 
 	sequences = np.random.choice(alphabet, (2, params['seq_num']//2, params['length']))
