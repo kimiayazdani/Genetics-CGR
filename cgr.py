@@ -3,16 +3,17 @@ import collections
 import matplotlib.cm as clt
 import matplotlib.pyplot as plt
 
-
 def show_img(seq, i):
-	global name
-
 	plt.title("Chaos Game Representation for " + name + ' ' + str(i))
 	plt.imshow(seq, interpolation='nearest', cmap=clt.gray_r)
 
-	plt.savefig("./"+name+"/"+name+str(i)+".png")
+def save_img(seq, i):
+	global name
+	show_img(seq, i)
 
+	plt.savefig("./"+name+"/"+name+str(i)+".png")
 	return i
+
 
 def load_sequences(filename, path="./"):
 	return np.load(path+filename)
@@ -28,6 +29,13 @@ def kmer_count(sequence):
 
 	return(k_spectra)
 
+
+def avg_cgr(sequence):
+	avg_chaos = np.mean(sequence, axis=0)
+
+	show_img(avg_chaos, "avg")
+
+	plt.savefig("avg"+name+".png")
 
 def cgr_build(kmers):
 	global k
@@ -69,21 +77,31 @@ if __name__ == "__main__":
 	control = load_sequences(filename="control.npy")
 	k = 3
 
-	# print(case)
-	# print(control)
+	need_avg = True 
+	need_img = False
 	
 	case_kspectra = list(map(kmer_count, case))
 	control_kspectra = list(map(kmer_count, control))
 
-	# print(case_kspectra)
-
 	case_cgr = list(map(cgr_build, case_kspectra))
 	control_cgr = list(map(cgr_build, control_kspectra))
 
-	name = "case"
-	done = list(map(show_img, case_cgr, range(len(case_cgr))))
 
-	name = "control"
-	done = list(map(show_img, control_cgr, range(len(control_cgr))))
+	if need_img:
+		name = "case"
+		done = list(map(show_img, case_cgr, range(len(case_cgr))))
 
-	print(done)
+		name = "control"
+		done = list(map(show_img, control_cgr, range(len(control_cgr))))
+
+
+		print(done)
+
+
+	if need_avg:
+
+		name = "case"
+		avg_cgr(case_cgr)
+
+		name = "control"
+		avg_cgr(control_cgr)
