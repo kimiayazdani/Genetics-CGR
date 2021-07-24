@@ -1,8 +1,18 @@
 import numpy as np
 import collections
 import matplotlib.cm as clt
-import pylab
+import matplotlib.pyplot as plt
 
+
+def show_img(seq, i):
+	global name
+
+	plt.title("Chaos Game Representation for " + name + ' ' + str(i))
+	plt.imshow(seq, interpolation='nearest', cmap=clt.gray_r)
+
+	plt.savefig("./"+name+"/"+name+str(i)+".png")
+
+	return i
 
 def load_sequences(filename, path="./"):
 	return np.load(path+filename)
@@ -62,28 +72,18 @@ if __name__ == "__main__":
 	# print(case)
 	# print(control)
 	
-
 	case_kspectra = list(map(kmer_count, case))
 	control_kspectra = list(map(kmer_count, control))
 
 	# print(case_kspectra)
 
-	print(case_kspectra[0])
-
-
-
-
-	cgr_window = cgr_build(case_kspectra[0])
-
-	pylab.title("Chaos Game Representation for 0th Case")
-	pylab.imshow(cgr_window, interpolation='nearest', cmap=clt.gray_r)
-
-	pylab.show()
-
-	# now for all
 	case_cgr = list(map(cgr_build, case_kspectra))
-	control_kspectra = list(map(cgr_build, control_kspectra))
+	control_cgr = list(map(cgr_build, control_kspectra))
 
-	print(case_cgr[0])
+	name = "case"
+	done = list(map(show_img, case_cgr, range(len(case_cgr))))
 
+	name = "control"
+	done = list(map(show_img, control_cgr, range(len(control_cgr))))
 
+	print(done)
