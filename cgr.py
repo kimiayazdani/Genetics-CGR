@@ -33,9 +33,7 @@ def kmer_count(sequence):
 def avg_cgr(sequence):
 	avg_chaos = np.mean(sequence, axis=0)
 
-	show_img(avg_chaos, "avg")
-
-	plt.savefig("avg"+name+".png")
+	save_img(avg_chaos, "avg")
 
 def cgr_build(kmers):
 	global k
@@ -71,14 +69,13 @@ def cgr_build(kmers):
 
 	return cgr_window
 
-
 if __name__ == "__main__":
 	case = load_sequences(filename="case.npy")
 	control = load_sequences(filename="control.npy")
 	k = 3
 
 	need_avg = True 
-	need_img = False
+	need_img = True
 	
 	case_kspectra = list(map(kmer_count, case))
 	control_kspectra = list(map(kmer_count, control))
@@ -89,10 +86,10 @@ if __name__ == "__main__":
 
 	if need_img:
 		name = "case"
-		done = list(map(show_img, case_cgr, range(len(case_cgr))))
+		done = list(map(save_img, case_cgr, range(len(case_cgr))))
 
 		name = "control"
-		done = list(map(show_img, control_cgr, range(len(control_cgr))))
+		done = list(map(save_img, control_cgr, range(len(control_cgr))))
 
 
 		print(done)
