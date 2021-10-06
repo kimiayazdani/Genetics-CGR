@@ -21,6 +21,18 @@ def save_img(seq, i):
 	plt.savefig("./DataPop/"+name+"/"+name+str(i)+".png")
 	return i
 
+
+def base_cgr():
+	path_euro = glob.glob('./DataPop/EuroFastas/*00365*')
+	for f in path_euro:
+		print(f)
+		fast = SeqIO.parse(f, "fasta")
+		for seq_record in fast:
+			fast = str(seq_record.seq)
+			break
+
+		return cgr_build(kmer_count(fast))
+
 def load_sequences(asia=True):
 	path_asia, path_euro = glob.glob('./DataPop/AsianFastas/*'), glob.glob('./DataPop/EuroFastas/*')
 	seq = list()
@@ -50,6 +62,8 @@ if __name__ == "__main__":
 	asia_seq = load_sequences()
 	euro_seq = load_sequences(asia=False)
 
+	base_chaos = base_cgr()
+
 	name = 'AsianCGR'
 
 	perform_cgr(asia_seq)
@@ -57,4 +71,8 @@ if __name__ == "__main__":
 	name = 'EuroCGR'
 
 	perform_cgr(euro_seq)
+
+
+
+	
 
