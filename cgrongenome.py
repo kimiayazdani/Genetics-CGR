@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import glob
 from Bio import SeqIO
 
+
 from cgr import kmer_count, cgr_build
 
 def show_img(seq, i):
@@ -51,20 +52,32 @@ def load_sequences(asia=True):
 
 	return seq
 
-def perform_cgr(seq):
-
+def perform_cgr(seq, base):
 	count_samples = list(map(kmer_count, seq))
-	cgr_samples = list(map(cgr_build, count_samples))
+	cgr_samples = np.array(list(map(cgr_build, count_samples)), dtype='int')
+
+	
+	
+	print(cgr_samples.shape)
+	
+	cgr_samples = cgr_samples - base
+
+	mini = abs(np.amin(cgr_samples)) + 1
+
+	print(mini)
+
+	cgr_samples = cgr_samples + mini 
+
 	done = list(map(save_img, cgr_samples, range(len(cgr_samples))))
 
 
 if __name__ == "__main__":
-	need_base = True
+	need_base = False
 
 	asia_seq = load_sequences()
 	euro_seq = load_sequences(asia=False)
 
-	base_chaos = base_cgr()
+	base_chaos = np.array(base_cgr(), dtype='int')
 	if need_base:
 		name = 'base'
 		show_img(base_chaos, 0)
@@ -73,11 +86,11 @@ if __name__ == "__main__":
 
 	name = 'AsianCGR'
 
-	perform_cgr(asia_seq)
+	# perform_cgr(asia_seq, base_chaos)
 
 	name = 'EuroCGR'
 
-	perform_cgr(euro_seq)
+	perform_cgr(euro_seq, base_chaos)
 
 
 
