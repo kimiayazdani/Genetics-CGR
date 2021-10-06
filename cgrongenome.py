@@ -7,7 +7,19 @@ from Bio import SeqIO
 
 from cgr import kmer_count, cgr_build
 
+def show_img(seq, i):
+	global name 
 
+	plt.title("Chaos Game Representation for " + name + ' ' + str(i))
+	plt.imshow(seq, interpolation='nearest', cmap=clt.gray_r)
+
+
+def save_img(seq, i):
+	global name
+	show_img(seq, i)
+
+	plt.savefig("./DataPop/"+name+"/"+name+str(i)+".png")
+	return i
 
 def load_sequences(asia=True):
 	path_asia, path_euro = glob.glob('./DataPop/AsianFastas/*'), glob.glob('./DataPop/EuroFastas/*')
@@ -27,12 +39,22 @@ def load_sequences(asia=True):
 
 	return seq
 
+def perform_cgr(seq):
+
+	count_samples = list(map(kmer_count, seq))
+	cgr_samples = list(map(cgr_build, count_samples))
+	done = list(map(save_img, cgr_samples, range(len(cgr_samples))))
+
+
 if __name__ == "__main__":
 	asia_seq = load_sequences()
 	euro_seq = load_sequences(asia=False)
 
+	name = 'AsianCGR'
 
-	first_sample = kmer_count(asia_seq[0])
-	first_cgr = cgr_build(first_sample)
+	perform_cgr(asia_seq)
 
+	name = 'EuroCGR'
+
+	perform_cgr(euro_seq)
 
