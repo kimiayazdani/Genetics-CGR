@@ -6,7 +6,7 @@ import glob
 from Bio import SeqIO
 
 
-from cgr import kmer_count, cgr_build
+from cgr import kmer_count, cgr_build, avg_cgr
 
 def show_img(seq, i):
 	global name 
@@ -56,8 +56,6 @@ def perform_cgr(seq, base):
 	count_samples = list(map(kmer_count, seq))
 	cgr_samples = np.array(list(map(cgr_build, count_samples)), dtype='int')
 
-	
-	
 	print(cgr_samples.shape)
 	
 	cgr_samples = cgr_samples - base
@@ -68,11 +66,18 @@ def perform_cgr(seq, base):
 
 	cgr_samples = cgr_samples + mini 
 
-	done = list(map(save_img, cgr_samples, range(len(cgr_samples))))
+	if need_avg:
+		avg_chaos = np.mean(cgr_samples, axis=0)
+		save_img(avg_chaos, "average")
+
+
+	if need_img_ind:
+		done = list(map(save_img, cgr_samples, range(len(cgr_samples))))
 
 
 if __name__ == "__main__":
 	need_base = False
+	need_img_ind, need_avg = False, True
 
 	asia_seq = load_sequences()
 	euro_seq = load_sequences(asia=False)
@@ -86,7 +91,7 @@ if __name__ == "__main__":
 
 	name = 'AsianCGR'
 
-	# perform_cgr(asia_seq, base_chaos)
+	perform_cgr(asia_seq, base_chaos)
 
 	name = 'EuroCGR'
 
