@@ -3,7 +3,15 @@ import collections
 import matplotlib.cm as clt
 import matplotlib.pyplot as plt
 
+
+
+#####GLOBAL SCOPE#####
+k = 5
+######################
+
 def show_img(seq, i):
+	global name 
+
 	plt.title("Chaos Game Representation for " + name + ' ' + str(i))
 	plt.imshow(seq, interpolation='nearest', cmap=clt.gray_r)
 
@@ -72,7 +80,6 @@ def cgr_build(kmers):
 if __name__ == "__main__":
 	case = load_sequences(filename="case.npy")
 	control = load_sequences(filename="control.npy")
-	k = 3
 
 	need_avg = True 
 	need_img = True
