@@ -59,10 +59,17 @@ def perform_cgr(seq):
 
 
 if __name__ == "__main__":
+	need_base = True
+
 	asia_seq = load_sequences()
 	euro_seq = load_sequences(asia=False)
 
 	base_chaos = base_cgr()
+	if need_base:
+		name = 'base'
+		show_img(base_chaos, 0)
+		plt.savefig("./base.png")
+
 
 	name = 'AsianCGR'
 
