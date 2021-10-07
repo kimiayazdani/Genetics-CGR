@@ -44,7 +44,7 @@ def base_cgr():
 		return cgr_build(kmer_count(fast))
 
 def load_sequences(asia=True):
-	path_asia, path_euro = glob.glob('./DataPop/AsianFastas/*'), glob.glob('./DataPop/EuroFastas/*')
+	path_asia, path_euro = glob.glob('./DataPop/AsianFastas/*t.fa'), glob.glob('./DataPop/EuroFastas/*t.fa')
 	seq = list()
 	file_path = path_asia if asia else path_euro
 
@@ -53,6 +53,12 @@ def load_sequences(asia=True):
 		for seq_record in fast:
 			# print(repr(seq_record.seq))
 			seq.append(str(seq_record.seq))
+			# print(len(seq[-1]))
+
+		fast = SeqIO.parse(f[:-3]+'_two.fa', "fasta")
+		for seq_record in fast:
+			seq[-1] += str(seq_record.seq)
+			# print(len(seq[-1]))
 
 	seq = np.array(seq, dtype='str')
 
@@ -77,7 +83,8 @@ def perform_cgr(seq, base):
 	
 	cgr_samples = cgr_samples - base
 
-	# mini = abs(min(np.amin(cgr_samples), 0)) + 1
+	mini = abs(min(np.amin(cgr_samples), 0)) + 1
+	print(mini)
 
 	cgr_samples = cgr_samples + adjust
 	if need_avg:
