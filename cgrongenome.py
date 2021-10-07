@@ -72,12 +72,14 @@ def perform_cgr(seq, base):
 
 
 	if need_img_ind:
-		done = list(map(save_img, cgr_samples, range(len(cgr_samples))))
+		done = list(map(save_img, cgr_samples, range(num_img)))
+
+
 
 
 if __name__ == "__main__":
-	need_base = False
-	need_img_ind, need_avg = False, True
+	need_img_ind, need_avg, need_base = True, False, False
+	num_img = 40
 
 	asia_seq = load_sequences()
 	euro_seq = load_sequences(asia=False)
