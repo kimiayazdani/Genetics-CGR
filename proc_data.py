@@ -9,17 +9,21 @@ def ancestry_separation():
 	print(asian.shape)
 	print(europian.shape)
 
-	asian_samples = list(asian['Sample name'])[:25]
-	europian_samples = list(europian['Sample name'])[:25]
+	asian_samples = list(asian['Sample name'])
+	europian_samples = list(europian['Sample name'])
 
 	print(asian_samples)
 	print(europian_samples)
 
 	asian_file = open("./DataPop/asian.txt", 'w')
 	euro_file = open("./DataPop/euro.txt", 'w')
-	for i in range(25):
-		asian_file.write(asian_samples[i] + '\n')
-		euro_file.write(europian_samples[i] + '\n')
+
+	for i in asian_samples:
+		asian_file.write(i + '\n')
+
+
+	for i in europian_samples:
+		euro_file.write(i + '\n')
 
 	asian_file.close()
 	euro_file.close()
@@ -50,7 +54,7 @@ def readliness():
 		print(len(line))
 
 if __name__ == "__main__":
-	test_read()
+	ancestry_separation()
 
 
 
