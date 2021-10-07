@@ -2,24 +2,19 @@ import os
 import glob
 
 
+def delete_files(path):
+	files = glob.glob(path)
+	for f in files:
+		os.remove(f)
+
 
 def phase_two():
-	files = glob.glob('./DataPop/AsianCGR/*.png')
-	for f in files:
-		os.remove(f)
-
-	files = glob.glob('./DataPop/EuroCGR/*.png')
-	for f in files:
-		os.remove(f)
+	delete_files('./DataPop/AsianCGR/*.png')
+	delete_files('./DataPop/EuroCGR/*.png')
 
 def phase_one():
-	files = glob.glob('./case/*.png')
-	for f in files:
-		os.remove(f)
-
-	files = glob.glob('./control/*.png')
-	for f in files:
-		os.remove(f)
+	delete_files('./case/*.png')
+	delete_files('./control/*.png')
 
 
 if __name__ == "__main__":
