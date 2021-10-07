@@ -8,6 +8,15 @@ from Bio import SeqIO
 
 from cgr import kmer_count, cgr_build, avg_cgr
 
+
+######GLOBAL SCOPE#######
+adjust = 16.388694618006248
+#########################
+
+def get_adjust():
+	return adjust
+
+
 def show_img(seq, i):
 	global name 
 
@@ -68,20 +77,18 @@ def perform_cgr(seq, base):
 	
 	cgr_samples = cgr_samples - base
 
-	mini = abs(min(np.amin(cgr_samples), 0)) + 1
-	
-	print(mini)
+	# mini = abs(min(np.amin(cgr_samples), 0)) + 1
 
-	cgr_samples = cgr_samples + mini 
+	cgr_samples = cgr_samples + adjust
 	if need_avg:
 		avg_chaos = np.mean(cgr_samples, axis=0)
 		save_img(avg_chaos, "average")
+		np.save('avgfinal'+name, avg_chaos)
 		# return avg_chaos
 
 
 	if need_img_ind:
 		done = list(map(save_img, cgr_samples, range(num_img)))
-
 
 
 def avg_whole(sample1, sample2):
@@ -91,8 +98,9 @@ def avg_whole(sample1, sample2):
 	np.save("chaos.out", avg_chaos)	
 
 if __name__ == "__main__":
-	need_img_ind, need_avg, need_base, need_rewrite = True, True, False, False
+	need_img_ind, need_avg, need_base, need_rewrite = False, True, False, False
 	num_img = 40
+	
 
 	asia_seq = load_sequences()
 	euro_seq = load_sequences(asia=False)
