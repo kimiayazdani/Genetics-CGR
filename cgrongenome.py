@@ -10,7 +10,7 @@ from cgr import kmer_count, cgr_build, avg_cgr
 
 
 ######GLOBAL SCOPE#######
-adjust = 16.388694618006248
+adjust = 10
 #########################
 
 def get_adjust():
@@ -81,18 +81,24 @@ def perform_cgr(seq, base):
 
 	print(cgr_samples.shape)
 	
-	cgr_samples = cgr_samples - base
 
-	mini = abs(min(np.amin(cgr_samples), 0)) + 1
-	print(mini)
+	if not need_gen_avg:
+		cgr_samples = cgr_samples - base
 
-	cgr_samples = cgr_samples + adjust
+		mini = abs(min(np.amin(cgr_samples), 0)) + 1
+		print(mini)
+
+		cgr_samples = cgr_samples + adjust
+
+		np.save('cgrfinal_'+name, cgr_samples)
+
+
 	if need_avg:
 		avg_chaos = np.mean(cgr_samples, axis=0)
 		save_img(avg_chaos, "average")
 		np.save('avgfinal'+name, avg_chaos)
-		# return avg_chaos
-
+		if need_gen_avg:
+			return avg_chaos
 
 	if need_img_ind:
 		done = list(map(save_img, cgr_samples, range(num_img)))
@@ -105,8 +111,8 @@ def avg_whole(sample1, sample2):
 	np.save("chaos.out", avg_chaos)	
 
 if __name__ == "__main__":
-	need_img_ind, need_avg, need_base, need_rewrite = False, True, False, False
-	num_img = 40
+	need_img_ind, need_avg, need_base, need_rewrite, need_gen_avg = True, True, False, False, False
+	num_img = 20
 	
 
 	asia_seq = load_sequences()
@@ -131,7 +137,10 @@ if __name__ == "__main__":
 
 	avg2 = perform_cgr(euro_seq, avg_base)
 
-	# avg_whole(avg1, avg2)
+	
+
+	if need_gen_avg:
+		avg_whole(avg1, avg2)
 
 
 
