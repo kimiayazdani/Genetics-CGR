@@ -14,6 +14,7 @@ def binary_acc(y_pred, y_test):
 
     correct_results_sum = (y_pred_tag == y_test).sum().float()
     acc = correct_results_sum/y_test.shape[0]
+    # print("ttaccuracy;", acc, correct_results_sum, y_test.shape[0])
     acc = torch.round(acc * 100)
     
     return acc
@@ -68,6 +69,7 @@ class binary_classifier(nn.Module):
 		self.batchnorm1 = nn.BatchNorm1d(500)
 		self.batchnorm2 = nn.BatchNorm1d(500)
 
+
 	def forward(self, inputs):
 		x = self.relu(self.layer_1(inputs))
 		x = self.batchnorm1(x)
@@ -87,7 +89,7 @@ def classify_torch():
 	model.to(device)
 	print(model)
 	criterion = nn.BCEWithLogitsLoss()
-	optimizer = optim.Adam(model.parameters(), lr=0.01)
+	optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 
 	# new_sampes = np.array(map(flatten, asia_samples))
@@ -119,7 +121,7 @@ def classify_torch():
 
 
 	model.train()
-	for e in range(1, 101):
+	for e in range(1, 51):
 		epoch_loss = 0
 		epoch_acc = 0
 		for X_batch, y_batch in train_loader:
@@ -150,8 +152,16 @@ def classify_torch():
 			y_pred_tag = torch.round(y_test_pred)
 			y_pred_list.append(y_pred_tag.cpu().numpy())
 
+
+	y_pred = model(torch.FloatTensor(X_test))
+	y_pred = torch.round(torch.sigmoid(y_pred))
+	y_pred = torch.reshape(y_pred, (202,))
+	
+	print("final accuracy:", float((y_pred==y_test).sum().float()/y_pred.shape[0])*100, "%")
+
 	y_pred_list = [a.squeeze().tolist() for a in y_pred_list]
 
+	print("accuracy:", binary_acc(y_pred, y_test))
 	print(classification_report(y_test, y_pred_list))
 
 	
