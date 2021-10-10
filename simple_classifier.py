@@ -109,7 +109,7 @@ def classify_torch():
 	train_data = torch.utils.data.TensorDataset(X, y)
 
 	scaler = StandardScaler()
-	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2)
+	X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1)
 	X_train = scaler.fit_transform(X_train)
 	X_test = scaler.transform(X_test)
 
@@ -121,7 +121,7 @@ def classify_torch():
 
 
 	model.train()
-	for e in range(1, 51):
+	for e in range(1, 101):
 		epoch_loss = 0
 		epoch_acc = 0
 		for X_batch, y_batch in train_loader:
@@ -155,7 +155,7 @@ def classify_torch():
 
 	y_pred = model(torch.FloatTensor(X_test))
 	y_pred = torch.round(torch.sigmoid(y_pred))
-	y_pred = torch.reshape(y_pred, (202,))
+	y_pred = torch.reshape(y_pred, (y_pred.shape[0],))
 	
 	print("final accuracy:", float((y_pred==y_test).sum().float()/y_pred.shape[0])*100, "%")
 
