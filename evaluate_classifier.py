@@ -3,6 +3,7 @@ import collections
 import json
 
 
+
 def load_prop(asia=True):
 	with open(('asia' if asia else 'euro')+"_probs.txt", "r") as fp:
 		return json.load(fp)
@@ -19,14 +20,19 @@ def check_duality(seq, asia=True):
 
 	for i in range(genome_len):
 		for j in range(len(seq)):
+			if len(seq[j]) != genome_len:
+				print(j, "jumping")
+				continue
 			try:
 				probs[i][seq[j][i]] += 1
 			except:
-				print(i, j,"why :(")
+				print(i, j,"This is a sign of deletion!")
 
 
 	with open(("asia" if asia else "euro")+"_probs.txt", "w") as fp:
 		json.dump(probs, fp)
+
+
 
 
 
@@ -39,9 +45,30 @@ if __name__ == "__main__":
 
 	# print(len(asia_seq), len(euro_seq))
 
+	# list_t = list()
+	# for i,seq in enumerate(euro_seq):
+	# 	if len(seq) != genome_len:
+	# 		print(i, len(seq))
+	# 		list_t.append(i)
+
+	# print(len(list_t))
+
+
 	# check_duality(asia_seq)
 	# check_duality(euro_seq, asia=False)
 
+	# asia_nums = load_prop()
+	# euro_nums = load_prop(asia=False)
+
+
+	# for i in range(1700):
+		# if asia_nums[i].keys() != euro_nums[i].keys():
+			# print(asia_nums[i].keys(), euro_nums[i].keys())
+
+
+
 	# print(load_prop()[:1000])
 
-	# try catch error on euro - 17508 5 why :( 17508 424 why
+
+	
+
