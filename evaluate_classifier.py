@@ -1,7 +1,7 @@
 from cgrongenome import load_sequences
 import collections
 import json
-
+import vcf
 
 
 def load_prop(asia=True):
