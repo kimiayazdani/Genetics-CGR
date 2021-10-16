@@ -5,6 +5,7 @@ import glob
 import pandas as pd
 import vcf
 import gzip
+from pprint import pprint
 
 def load_data_from(asia=True):
 	samples = list()
@@ -34,27 +35,47 @@ def vcf_with_pysam():
 		if i == 100:
 			break
 
-def vcf_with_vcf():
+
+def create_row(res, gene, vcf_reader, samples):
+
+	for rec in vcf_reader.fetch('19', *gene):
+		# print(rec.CHROM, rec.var_type, rec.var_subtype, rec.start, rec.end, rec.QUAL, rec.POS, rec.REF, rec.ALT)
+
+		row = [rec.POS, rec.REF, rec.ALT[0], rec.var_type, rec.var_subtype, rec.QUAL, 0]
+
+		for sample in samples:
+			# print(rec.genotype(sample).data.GT[0])
+			row.append(rec.genotype(sample).data.GT[0])
+			
+		# print(len(row))
+
+		res.append(row)
+
+
+
+def vcf_with_vcf(asia=True):
+
+	samples = asian_samples if asia else euro_samples
 	vcf_reader = vcf.Reader(filename="./DataPop/ALL.chr19.phase3_shapeit2_mvncall_integrated_v5b.20130502.genotypes.vcf.gz",
 	 compressed=True)
-	cols = ['sample','REF','ALT','mut','DP','ADF','ADR','AD','chrom','var_type','sub_type','start','end','QUAL']
-	# print(vcf_reader.infos)
+	cols = ['POS', 'REF', 'ALT', 'var_type', 'sub_type', 'QUAL', 'gene'] + samples
 
-	#'19', 10216899, 10225456
-	#vcf.filters.SnpOnly(args)
+	res_df = []
 
+
+	res = []
 	CHROM = None
-	for rec in vcf_reader.fetch('19', *gene1):
-		print(rec.CHROM, rec.var_type, rec.var_subtype, rec.start, rec.end, rec.QUAL, rec.POS)
-		for sample in asian_samples:
-			print(rec.genotype(sample).data.GT[0])
-			break
-
-		break
-
-	# print(vcf_reader.fetch(CHROM))
 	
 
+	create_row(res, gene1, vcf_reader, samples)
+	create_row(res, gene2, vcf_reader, samples)
+
+
+	res = pd.DataFrame(res, columns=cols)
+	# res.to_csv('outtest.csv')
+	res.to_pickle("./"+("asia" if asia else "euro")+"_vcf.pkl")
+
+	return res
 
 
 
@@ -62,17 +83,33 @@ if __name__ == "__main__":
 	asian_samples, euro_samples = load_data_from(), load_data_from(False)	
 	gene1 = (10216899, 10225456)
 	gene2 = (14063304, 14072254)
-	# vcf_with_pysam()
-	vcf_with_vcf()
+	# vcf_with_vcf()
+	# vcf_with_vcf(False)
+
+	df_asia = pd.read_pickle("./asia_vcf.pkl")
+	df_euro = pd.read_pickle("./euro_vcf.pkl")
+
+	print(df_asia.shape)
+	print(df_euro.shape)
+	# df = pd.read_pickle("./outtest.pkl")
+	# print(df.shape)
+	# print(df.columns)
+	# pprint(df)
+	# # print(df[['POS','REF', 'ALT']])
+	# # df_f = df['POS']
+	# # print(df_f[df_f.duplicated()])
+	# # print(df[180:200])
+	# only_snp = df[df.var_type=='snp']
+	# sample_GT = only_snp[df.columns[7:]]
+	# sample_GT['SUM'] = sample_GT.sum(axis=1)
+
+	# print(sample_GT['SUM'].sum())
+
+	#add one column to each row:: prob 
+	#then for each sample see if 1: prob if 0 1-prob
 
 
-#alan farz konim filter kardam ye seri satr o sootoon ro, hala az in bein ma mikhaim daghighan chi kar konim
-#age mitoonestam in ro mesle pandas baz konam benazaram kheili khoob bood, ya hata chizaii ke baiad ro bardaram
-#tabdilesh konam be df e panda save konam
-#chi mikham bardaram? alts, GT[0], sample ha ro joda chiz mikonam yani ye doc bara euro yeki bara asia,
-#baad oonja ba amaliat e filter va baad jam o tghsim bar tedad handle esh mikonam
 
-# sootoona : sample ha, ref ha, alt ha, var_type, subtype, QUAL - radif: POS
 
 
 # http://dmnfarrell.github.io/bioinformatics/multi-sample-vcf-dataframe
