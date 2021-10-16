@@ -16,6 +16,12 @@ def load_data_from(asia=True):
 
 	return samples
 
+
+def process_data(df):
+	print(df.shape)
+	only_snp = df[df.var_type=='snp']
+	sample_GT = only_snp[df.columns[7:]]
+	sample_GT['SUM'] = sample_GT.sum(axis=1)
 	
 
 def vcf_with_pysam():
@@ -60,8 +66,6 @@ def vcf_with_vcf(asia=True):
 	 compressed=True)
 	cols = ['POS', 'REF', 'ALT', 'var_type', 'sub_type', 'QUAL', 'gene'] + samples
 
-	res_df = []
-
 
 	res = []
 	CHROM = None
@@ -72,10 +76,11 @@ def vcf_with_vcf(asia=True):
 
 
 	res = pd.DataFrame(res, columns=cols)
-	# res.to_csv('outtest.csv')
+
 	res.to_pickle("./"+("asia" if asia else "euro")+"_vcf.pkl")
 
 	return res
+
 
 
 
@@ -89,21 +94,7 @@ if __name__ == "__main__":
 	df_asia = pd.read_pickle("./asia_vcf.pkl")
 	df_euro = pd.read_pickle("./euro_vcf.pkl")
 
-	print(df_asia.shape)
-	print(df_euro.shape)
-	# df = pd.read_pickle("./outtest.pkl")
-	# print(df.shape)
-	# print(df.columns)
-	# pprint(df)
-	# # print(df[['POS','REF', 'ALT']])
-	# # df_f = df['POS']
-	# # print(df_f[df_f.duplicated()])
-	# # print(df[180:200])
-	# only_snp = df[df.var_type=='snp']
-	# sample_GT = only_snp[df.columns[7:]]
-	# sample_GT['SUM'] = sample_GT.sum(axis=1)
-
-	# print(sample_GT['SUM'].sum())
+	process_data(df_euro)
 
 	#add one column to each row:: prob 
 	#then for each sample see if 1: prob if 0 1-prob
