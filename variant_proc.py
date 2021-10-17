@@ -19,20 +19,28 @@ def load_data_from(asia=True):
 
 def process_data(asia=True):
 	df = df_asia if asia else df_euro
-	print(df.shape)
+	# print(df.shape)
 	only_snp = df[df.var_type=='snp']
 	sample_GT = only_snp[df.columns[7:]]
 	# sample_GT['zeroes'] = (sample_GT==0).astype(int).sum(axis=1)
 	# sample_GT['ones'] = (sample_GT==1).astype(int).sum(axis=1)
 	sample_GT['SUM'] = sample_GT.sum(axis=1)
-	print(len(sample_GT.columns))
+	# print(len(sample_GT.columns))
 
 	sample_GT[('A' if asia else 'E')+'PROB'] = sample_GT['SUM']/len(sample_GT.columns)
 	sample_GT[('A' if asia else 'E')+'1-PROB'] = 1 - sample_GT[('A' if asia else 'E')+'PROB']
 
-	print(sample_GT[['SUM',('A' if asia else 'E')+'PROB',('A' if asia else 'E')+'1-PROB']])
+	# print(sample_GT[['SUM',('A' if asia else 'E')+'PROB',('A' if asia else 'E')+'1-PROB']])
 
 	return sample_GT
+
+def add_probs(asia=True):
+	df = asia_sampleGT if asia else euro_sampleGT
+	other_df = euro_sampleGT if asia else asia_sampleGT
+
+	query = ('E' if asia else 'A')
+	df[query+'PROB'] = other_df[('E' if asia else 'A')+'PROB']
+	df[('E' if asia else 'A')+'1-PROB'] = other_df[query+'1-PROB']
 
 	
 
@@ -108,8 +116,18 @@ if __name__ == "__main__":
 	asia_sampleGT = process_data()
 	euro_sampleGT = process_data(False)
 
-	print(asia_sampleGT)
-	print(euro_sampleGT)
+	# print(asia_sampleGT)
+	# print(euro_sampleGT)
+
+	# asia_sampleGT['EPROB'] = euro_sampleGT['EPROB']
+	add_probs()
+	add_probs(False)
+	
+	# print(asia_sampleGT)
+	# print(euro_sampleGT)
+
+
+
 	#add one column to each row:: prob 
 	#then for each sample see if 1: prob if 0 1-prob
 
