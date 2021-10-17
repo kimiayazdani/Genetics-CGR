@@ -39,8 +39,8 @@ def add_probs(asia=True):
 	other_df = euro_sampleGT if asia else asia_sampleGT
 
 	query = ('E' if asia else 'A')
-	df[query+'PROB'] = other_df[('E' if asia else 'A')+'PROB']
-	df[('E' if asia else 'A')+'1-PROB'] = other_df[query+'1-PROB']
+	df[query+'PROB'] = other_df[query+'PROB']
+	df[query+'1-PROB'] = other_df[query+'1-PROB']
 
 	
 
@@ -100,12 +100,32 @@ def vcf_with_vcf(asia=True):
 	return res
 
 
+def calc_anc_for_samples(df):
+	print(asia_sampleGT.shape)
+
+	make_prob = lambda samp: samp*df[name+'PROB']+(1-samp)*df[name+'1-PROB']
+
+	for name in ['A','E']:
+		df.loc['TOTAL'+name, :] = df[df.columns[:-3]].apply(make_prob).sum(axis=0)
+
+	# print(df)
+
+def calc_winner(asia=True):
+	df = asia_sampleGT if asia else euro_sampleGT
+
+
+
+	df.loc['CORRECT',:] = (df.loc['TOTAL'+['E','A'][asia],:]>df.loc['TOTAL'+['A','E'][asia],:]).astype(int)
+	return df.loc['CORRECT',:].sum(axis=0)
+	# print(df)
 
 
 if __name__ == "__main__":
 	asian_samples, euro_samples = load_data_from(), load_data_from(False)	
+	num_asia, num_euro = len(asian_samples), len(euro_samples)
 	gene1 = (10216899, 10225456)
 	gene2 = (14063304, 14072254)
+
 	# vcf_with_vcf()
 	# vcf_with_vcf(False)
 
@@ -122,17 +142,19 @@ if __name__ == "__main__":
 	# asia_sampleGT['EPROB'] = euro_sampleGT['EPROB']
 	add_probs()
 	add_probs(False)
-	
+
+	calc_anc_for_samples(asia_sampleGT)
+	calc_anc_for_samples(euro_sampleGT)
+
 	# print(asia_sampleGT)
 	# print(euro_sampleGT)
 
+	correct = calc_winner(False) + calc_winner()
+	print(correct)
+	print(correct/(num_asia+num_euro))
+
+	# add one row for % of euro , one for % of asia. then for asia if asia bigger: 1 for euro reverse
 
 
-	#add one column to each row:: prob 
-	#then for each sample see if 1: prob if 0 1-prob
 
-
-
-
-
-# http://dmnfarrell.github.io/bioinformatics/multi-sample-vcf-dataframe
+	# ok the thing is: add one row for each sample with 1/0 1:right-0:wrong
